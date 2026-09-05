@@ -13,6 +13,7 @@ const { initSettings } = require("./settingsControllers");
 const { initTags } = require("./tagControllers");
 const { initInbox } = require("./inboxControllers");
 const { updateLogInStreak } = require("./userControllers");
+const { NotFound } = require("../errors");
 
 // controllers
 const login = async (req, res) => {
@@ -39,6 +40,9 @@ const register = async (req, res) => {
     const { fullname, email, password } = req.body;
     if (!fullname || !email || !password) throw new BadRequest('Invalid Credentials');
 
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(StatusCodes.CREATED).json("Success");
+
     const verificationCode = crypto.randomInt(100000, 1000000);
     const newUser = { fullname, email, password };
     const registeredUser = await User.create(newUser);
@@ -48,7 +52,7 @@ const register = async (req, res) => {
 
     await VE.create({ email, verificationCode: hashString(String(verificationCode)) });
     await sendVerificationEmail(email, verificationCode);
-    res.status(StatusCodes.CREATED).json(verificationCode)
+    res.status(StatusCodes.CREATED).json("Success")
 }
 
 const resendVerificationEmail = async (req, res) => {

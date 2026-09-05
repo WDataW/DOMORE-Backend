@@ -5,7 +5,7 @@ const router = require('express').Router();
 router.post('/login', login);
 router.post('/register', register);
 router.post('/verify-email', verifyEmail);
-router.get('/resend-verification-email', resendVerificationEmail);
+router.post('/resend-verification-email', resendVerificationEmail);
 router.post('/reset-password', resetPassword);
 router.post('/forgot-password', forgotPassword);
 router.get('/showMe', authenticator, showMe);
