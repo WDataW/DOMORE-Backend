@@ -6,28 +6,6 @@ const settingsSchema = mongoose.Schema({
         required: true,
         immutable: true
     },
-    notifications: {
-        all: {
-            type: Boolean,
-            default: true,
-            required: true,
-        },
-        reminders: {
-            type: Boolean,
-            default: true,
-            required: true,
-        },
-        alerts: {
-            type: Boolean,
-            default: true,
-            required: true,
-        },
-        announcements: {
-            type: Boolean,
-            default: true,
-            required: true,
-        },
-    },
     language: {
         type: String,
         enum: ['en', 'ar'],
@@ -37,14 +15,28 @@ const settingsSchema = mongoose.Schema({
             type: String,
             enum: ['light', 'dark'],
         },
-        accentColor: {
+        lightAccentColor: {
             type: String,
             validate: {
                 validator: validator.isHexColor,
                 message: 'Please provide a valid hex color'
             }
         },
-        secondaryColor: {
+        lightSecondaryColor: {
+            type: String,
+            validate: {
+                validator: validator.isHexColor,
+                message: 'Please provide a valid hex color'
+            }
+        },
+        darkAccentColor: {
+            type: String,
+            validate: {
+                validator: validator.isHexColor,
+                message: 'Please provide a valid hex color'
+            }
+        },
+        darkSecondaryColor: {
             type: String,
             validate: {
                 validator: validator.isHexColor,

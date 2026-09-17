@@ -3,12 +3,19 @@ const { RP, User } = require('@root/models');
 const { StatusCodes } = require('http-status-codes');
 const { createTransporter, hashString, generateHex, emailVerification } = require("@root/utils");
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const { attachAuthCookies, removeAccessCookie } = require("../utils/cookies");
 const { passwordReset } = require("../utils/emails");
 const { isFutureDate } = require("../utils/date");
 const { minute } = require("../utils/time");
-const { RT } = require("../models");
+const { RT, VE } = require("../models");
 const { initSettings } = require("./settingsControllers");
+const { initTags } = require("./tagControllers");
+const { initInbox } = require("./inboxControllers");
+const { updateLogInStreak } = require("./userControllers");
+const { NotFound } = require("../errors");
+const sendMail = require("../utils/sendEmail");
+
 // controllers
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -24,7 +31,9 @@ const login = async (req, res) => {
 }
 const logout = async (req, res) => {
     const { id } = req.user;
-    await RT.deleteOne({ id });
+    const userAgent = req.get('User-Agent');
+
+    await RT.deleteOne({ userId: id, userAgent });
     removeAccessCookie(res);
     res.status(StatusCodes.OK).json({ message: 'Logged out successfully' });
 }
@@ -32,25 +41,47 @@ const register = async (req, res) => {
     const { fullname, email, password } = req.body;
     if (!fullname || !email || !password) throw new BadRequest('Invalid Credentials');
 
-    const verificationToken = generateHex(32);
-    const newUser = { fullname, email, password, verificationToken: hashString(verificationToken) };
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(StatusCodes.CREATED).json("Success");
+
+    const verificationCode = crypto.randomInt(100000, 1000000);
+    const newUser = { fullname, email, password };
     const registeredUser = await User.create(newUser);
-    await initSettings(registeredUser._id)
-    await sendVerificationEmail(email, verificationToken);
-    res.status(StatusCodes.CREATED).json(verificationToken)
+    await initSettings(registeredUser._id);
+    await initTags(registeredUser._id);
+    await initInbox(registeredUser._id);
+
+    await VE.create({ email, verificationCode: hashString(String(verificationCode)) });
+    await sendVerificationEmail(email, verificationCode);
+    res.status(StatusCodes.CREATED).json("Success")
+}
+
+const resendVerificationEmail = async (req, res) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (user.isVerified) return res.status(StatusCodes.OK).json("Email already verified");
+
+    const verificationCode = crypto.randomInt(100000, 1000000);
+    await VE.findOneAndReplace({ email }, { email, verificationCode: hashString(String(verificationCode)) }, { upsert: true, returnDocument: 'after' });
+    await sendVerificationEmail(email, verificationCode);
+    res.status(StatusCodes.OK).json(verificationCode);
 }
 
 const verifyEmail = async (req, res) => {
-    const { email, token } = req.query;
+    const { code, email } = req.body
     const user = await User.findOne({ email });
-    if (!user) throw new BadRequest('Invalid verification request');
-    if (user.isVerified) throw new BadRequest("Email already verified");
-    const verificationToken = hashString(token);
-    if (verificationToken !== user.verificationToken) throw new BadRequest('Invalid verification request');
+    const verificationRequest = await VE.findOne({ email });
+    if (user.isVerified) return res.status(StatusCodes.OK).json("Email already verified");
+    if (!verificationRequest) throw new BadRequest('Invalid verification request');
+    const hashedCode = hashString(code);
+    if (hashedCode !== verificationRequest.verificationCode) throw new BadRequest('Invalid verification request');
+    if (!isFutureDate(verificationRequest.expiresAt)) throw new BadRequest('Validation code expired, request a new one');
+
+    await verificationRequest.deleteOne({ email });
 
     user.isVerified = true;
-    user.verificationToken = "none";
-    await user.save();
+    await user.save({ validateBeforeSave: false });
+
     await attachAuthCookies(req, res, { id: user._id, fullname: user.fullname });
     return res.status(StatusCodes.OK).json({ message: 'Email verified successfully' });
 }
@@ -60,7 +91,7 @@ const forgotPassword = async (req, res) => {
     if (!email) throw new BadRequest('Email must be provided');
 
     const user = await User.findOne({ email });
-    if (!user) throw new BadRequest('Invalid credintials');
+    if (!user) return res.status(StatusCodes.OK).json('Check your email');
 
     const resetToken = generateHex(32);
     const hashedResetToken = hashString(resetToken);
@@ -97,21 +128,22 @@ const resetPassword = async (req, res) => {
 
 const showMe = async (req, res) => {
     const { id: _id } = req.user;
-    const user = await User.findOne({ _id });
+    const user = await User.findOne({ _id }).select('email fullname lastLogIn highestLogInStreak currentLogInStreak createdAt -_id');
+    if (!user) return;
+    await updateLogInStreak(user);
     res.status(StatusCodes.OK).json(user)
 }
 // helper functions
-const sendVerificationEmail = async (to, verificationToken) => {
-    const verificationUrl = `${process.env.APP_URL}/auth/verify-email?email=${to}&token=${verificationToken}`
-    const transporter = createTransporter();
-    const mail = emailVerification({ from: 'domores@wdata.app', to, verificationUrl });
-    await transporter.sendMail(mail);
+const sendVerificationEmail = async (to, verificationCode) => {
+    // const transporter = createTransporter();
+    const mail = emailVerification({ to, verificationCode });
+    await sendMail(mail);
 }
 const sendResetEmail = async (to, resetToken) => {
-    const resetUrl = `${process.env.APP_URL}/auth/reset-password?email=${to}&token=${resetToken}`
-    const transporter = createTransporter();
-    const mail = passwordReset({ from: 'domores@wdata.app', to, resetUrl });
-    await transporter.sendMail(mail);
+    // const transporter = createTransporter();
+    const resetUrl = `${process.env.FRONT_END_URL}/auth/reset-password?email=${to}&token=${resetToken}`
+    const mail = passwordReset({ to, resetUrl });
+    await sendMail(mail);
 }
 
-module.exports = { showMe, login, logout, register, verifyEmail, resetPassword, forgotPassword }
+module.exports = { resendVerificationEmail, showMe, login, logout, register, verifyEmail, resetPassword, forgotPassword }

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const hashPassword = require('../utils/hashPassword');
+const { dateOfInvocation } = require('../utils/date');
 
 const userSchema = mongoose.Schema({
     fullname: {
@@ -13,17 +14,21 @@ const userSchema = mongoose.Schema({
         validate: validator.isEmail,
         immutable: true
     },
+    createdAt: {
+        type: Date,
+        default: dateOfInvocation,
+        immutable: true
+    },
     password: {
         type: String,
-        validate: validator.isStrongPassword
+        validate: (password) => {
+            if (password.length > 24) return false;
+            return validator.isStrongPassword(password)
+        }
     },
     isVerified: {
         type: Boolean,
         default: false
-    },
-    verificationToken: {
-        type: String,
-        required: true
     },
     isDeleted: {
         type: Boolean,
@@ -32,7 +37,20 @@ const userSchema = mongoose.Schema({
     isSuspended: {
         type: Boolean,
         default: false
-    }
+    },
+    highestLogInStreak: {
+        type: Number,
+        default: 1
+    },
+    currentLogInStreak: {
+        type: Number,
+        default: 1
+    },
+    lastLogIn: {
+        type: Date,
+        default: dateOfInvocation,
+    },
+
 });
 userSchema.pre('save', async function () {
     if (this.isModified('password')) {

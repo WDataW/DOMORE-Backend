@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 
 // Create a transporter using SMTP
 const createTransporter = () => nodemailer.createTransport({
-    host: "smtp.ethereal.email",
+    host: process.env.SMTP_HOST,
     port: 587,
     secure: process.env.NODE_ENV == 'production',
     auth: {

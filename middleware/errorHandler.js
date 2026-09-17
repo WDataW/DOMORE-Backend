@@ -4,11 +4,7 @@ const errorHandler = async (err, req, res, next) => {
     if (err.message) customError.message = err.message;
     if (err.statusCode) customError.statusCode = err.statusCode
     res.status(customError.statusCode).json({
-        err: {
-            status: err.statusCode,
-            message: err.message
-        }
+        message: err.message
     })
-    console.log(err);
 }
 module.exports = errorHandler

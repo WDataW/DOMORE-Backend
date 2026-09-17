@@ -27,6 +27,10 @@ const refreshTokenSchema = mongoose.Schema({
     isRevoked: {
         type: Boolean,
         default: false
+    },
+    expiresAt: {
+        type: Date,
+        required: true
     }
 });
 const RTModel = mongoose.model("RT", refreshTokenSchema);

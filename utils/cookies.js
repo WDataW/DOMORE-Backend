@@ -1,6 +1,7 @@
 const { RT } = require("@root/models");
 const { signJWT } = require("./jwt");
 const { day, minute } = require("./time");
+const { isFutureDate } = require("./date");
 
 const attachCookie = ({ res, name, value, expires }) => {
     res.cookie(name, value, {
@@ -16,23 +17,17 @@ const attachAuthCookies = async (req, res, user) => {
     // creating access token (overwritten if exists)
     attachAccessCookie(res, user);
 
-    // creating refresh token (overwritten if exists)
-    const sessionId = crypto.randomUUID();
-    const refreshToken = attachRefreshCookie(res, user, sessionId);
-
-    // if there is a stored refreshToken in DB then replace it
     const { ip } = req;
     const userAgent = req.get('User-Agent');
-    const existingRefreshToken = await RT.findOne({ userId: user.id });
-    if (!existingRefreshToken) {
-        await RT.create({ userId: user.id, sessionId, ip, userAgent, refreshToken });
-    } else {
-        existingRefreshToken.ip = ip;
-        existingRefreshToken.userAgent = userAgent;
-        existingRefreshToken.sessionId = sessionId;
-        existingRefreshToken.refreshToken = refreshToken;
-        existingRefreshToken.isRevoked = false;
-        await existingRefreshToken.save();
+    const existingRefreshToken = await RT.findOne({ userId: user.id, userAgent });
+    if (!existingRefreshToken || existingRefreshToken.isRevoked || !isFutureDate(existingRefreshToken.expiresAt)) {// invalid token
+        const sessionId = crypto.randomUUID();
+        const refreshToken = attachRefreshCookie(res, user, sessionId);
+        await RT.create({ userId: user.id, sessionId, ip, userAgent, refreshToken, expiresAt: new Date(Date.now() + 30 * day) });
+    } else {// refresh token is still valid
+        existingRefreshToken.expiresAt = new Date(Date.now() + 30 * day);// extend it
+        existingRefreshToken.save();
+        attachCookie({ res, name: 'refreshToken', value: existingRefreshToken.refreshToken, expires: new Date(existingRefreshToken.expiresAt) })
     }
 }
 const attachRefreshCookie = (res, user, sessionId) => {

@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const { dateOfInvocation } = require('../utils/date');
 const taskSchema = mongoose.Schema({
+    id: {
+        type: String,
+        default: () => 'task:' + crypto.randomUUID(),
+        immutable: true
+    },
     userId: {
         type: String,
         required: true,
@@ -25,9 +30,18 @@ const taskSchema = mongoose.Schema({
     tags: {
         type: [String]
     },
-    isCompleted: {
+    status: {
+        type: String,
+        enum: ['completed', 'active'],
+        default: 'active'
+
+    },
+    pinned: {
         type: Boolean,
         default: false
+    },
+    completedAt: {
+        type: Date,
     },
     createdAt: {
         type: Date,
