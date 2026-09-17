@@ -8,8 +8,6 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { authenticator, notFound, errorHandler } = require('./middleware');
 const { authRouter, tasksRouter, tagsRouter, accountRouter } = require('./routes');
-const { Message } = require('./models');
-const messageModel = require('./models/Message');
 
 // middleware
 app.use(fileUpload({
@@ -28,7 +26,7 @@ app.use('/api/v1/account', authenticator, accountRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 const start = async () => {
     try {
         await connect(process.env.MONGO_URI);

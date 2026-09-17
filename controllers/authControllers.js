@@ -128,7 +128,7 @@ const resetPassword = async (req, res) => {
 
 const showMe = async (req, res) => {
     const { id: _id } = req.user;
-    const user = await User.findOne({ _id }).select('email fullname lastLogIn highestLogInStreak currentLogInStreak createdAt -_id');
+    const user = await User.findOne({ _id }).select('_id email fullname lastLogIn highestLogInStreak currentLogInStreak createdAt');
     if (!user) return;
     await updateLogInStreak(user);
     res.status(StatusCodes.OK).json(user)
