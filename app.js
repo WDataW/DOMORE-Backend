@@ -15,7 +15,10 @@ app.use(fileUpload({
         fileSize: 5 * 1024 * 1024 // 5 MB
     },
 }));
-app.use(cors())
+app.use(cors({
+    origin: process.env.FRONT_END_URL,
+    credentials: true
+}))
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIES_SECRET));
 app.use(express.urlencoded())
