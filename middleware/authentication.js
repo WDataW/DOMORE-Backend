@@ -17,7 +17,6 @@ const authenticator = async (req, res, next) => {
     }
     if (!payload) throw new Unauthorized('Please log in first');
     req.user = payload;
-    console.log(payload);
     next();
 }
 

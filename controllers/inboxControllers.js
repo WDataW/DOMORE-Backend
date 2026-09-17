@@ -8,7 +8,6 @@ const getInbox = async (req, res) => {
     const messages = await Message.find({ userId }).lean();
     const systemMessages = await SystemMessage.find({ userId }).lean();
     const resolvedMessages = resolveSystemMessages({ sysMessages: systemMessages, lang: settings.language ?? "en" });
-    console.log(resolvedMessages);
     const allMessages = [...messages, ...resolvedMessages];
     res.status(StatusCodes.OK).json(allMessages);
 }
