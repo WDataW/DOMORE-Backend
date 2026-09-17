@@ -30,7 +30,6 @@ const deleteAccount = async (req, res) => {
     }
     res.status(StatusCodes.OK).json("account deleted along with all its data")
 }
-
 const updateLogInStreak = async (user) => {
     const lastLogIn = normalize(new Date(user.lastLogIn));
     const today = getToday();
