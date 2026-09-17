@@ -14,6 +14,7 @@ const { initTags } = require("./tagControllers");
 const { initInbox } = require("./inboxControllers");
 const { updateLogInStreak } = require("./userControllers");
 const { NotFound } = require("../errors");
+const sendMail = require("../utils/sendEmail");
 
 // controllers
 const login = async (req, res) => {
@@ -90,7 +91,7 @@ const forgotPassword = async (req, res) => {
     if (!email) throw new BadRequest('Email must be provided');
 
     const user = await User.findOne({ email });
-    if (!user) res.status(StatusCodes.OK).json('Check your email');
+    if (!user) return res.status(StatusCodes.OK).json('Check your email');
 
     const resetToken = generateHex(32);
     const hashedResetToken = hashString(resetToken);
@@ -134,15 +135,15 @@ const showMe = async (req, res) => {
 }
 // helper functions
 const sendVerificationEmail = async (to, verificationCode) => {
-    const transporter = createTransporter();
-    const mail = emailVerification({ from: 'domores@wdata.app', to, verificationCode });
-    await transporter.sendMail(mail);
+    // const transporter = createTransporter();
+    const mail = emailVerification({ to, verificationCode });
+    await sendMail(mail);
 }
 const sendResetEmail = async (to, resetToken) => {
+    // const transporter = createTransporter();
     const resetUrl = `${process.env.FRONT_END_URL}/auth/reset-password?email=${to}&token=${resetToken}`
-    const transporter = createTransporter();
-    const mail = passwordReset({ from: 'domores@wdata.app', to, resetUrl });
-    await transporter.sendMail(mail);
+    const mail = passwordReset({ to, resetUrl });
+    await sendMail(mail);
 }
 
 module.exports = { resendVerificationEmail, showMe, login, logout, register, verifyEmail, resetPassword, forgotPassword }
