@@ -1,4 +1,3 @@
-const { authenticator } = require('@root/middleware');
 const { deleteTask, createTask, editTask, getTask, getAllTasks } = require('@root/controllers');
 const { minute } = require('../utils/time');
 const createLimiter = require('../utils/createLimiter');
@@ -10,9 +9,9 @@ const tasksLimiter = createLimiter({
     max: 150
 });
 
-router.get('/', authenticator, tasksLimiter, getAllTasks)
-router.put('/create-task', authenticator, tasksLimiter, createTask)
-router.get('/:taskId', authenticator, tasksLimiter, getTask)
-router.patch('/:taskId', authenticator, tasksLimiter, editTask)
-router.delete('/:taskId', authenticator, tasksLimiter, deleteTask)
+router.get('/', tasksLimiter, getAllTasks)
+router.put('/create-task', tasksLimiter, createTask)
+router.get('/:taskId', tasksLimiter, getTask)
+router.patch('/:taskId', tasksLimiter, editTask)
+router.delete('/:taskId', tasksLimiter, deleteTask)
 module.exports = router;
