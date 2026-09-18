@@ -8,6 +8,7 @@ const attachCookie = ({ res, name, value, expires }) => {
         httpOnly: true,
         expires: expires,
         signed: true,
+        sameSite: 'strict',
         secure: process.env.NODE_ENV == 'production',
         path: '/'
     })
