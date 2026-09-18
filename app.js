@@ -5,10 +5,12 @@ const app = express();
 const connect = require('./db/connect');
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
+const { rateLimit } = require('express-rate-limit');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const { authenticator, notFound, errorHandler } = require('./middleware');
 const { authRouter, tasksRouter, tagsRouter, accountRouter } = require('./routes');
+const { minute } = require('./utils/time');
 
 // middleware
 app.use(fileUpload({
@@ -20,6 +22,12 @@ app.use(cors({
     origin: process.env.FRONT_END_URL,
     credentials: true
 }))
+
+const readLimiter = rateLimit({
+    windowMs: 15 * minute,
+    max: 1000,
+    message: 'Too many attempts, try again in 15 minutes'
+})
 app.use(helmet())
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIES_SECRET));
