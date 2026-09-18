@@ -1,9 +1,9 @@
 const { resendVerificationEmail, showMe, login, logout, register, verifyEmail, resetPassword, forgotPassword } = require('@root/controllers');
 const authenticator = require('../middleware/authentication');
 const { minute } = require('../utils/time');
-const rateLimiter = require('../utils/rateLimit');
+const createLimiter = require('../utils/createLimiter');
 const router = require('express').Router();
-const authLimiter = rateLimiter({
+const authLimiter = createLimiter({
     windowMs: 15 * minute,
     max: 5,
 })
