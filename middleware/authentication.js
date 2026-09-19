@@ -1,6 +1,7 @@
 const { verifyJWT, attachAccessCookie } = require("@root/utils");
 const { Unauthorized } = require("../errors");
 const { RT } = require("../models");
+const validate = require("../validators/validateInput");
 
 const authenticator = async (req, res, next) => {
     const { accessToken } = req.signedCookies;
@@ -16,6 +17,7 @@ const authenticator = async (req, res, next) => {
         payload = await checkRefreshToken(req, res);
     }
     if (!payload) throw new Unauthorized('Please log in first');
+    validate('userId', payload.id)
     req.user = payload;
     next();
 }

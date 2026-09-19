@@ -1,11 +1,17 @@
 const { ValidationError, fromError } = require("zod-validation-error");
 const { loginSchema, registerSchema, emailSchema, verifyEmailSchema, resetPasswordSchema } = require("./authSchemas");
+const { createTaskSchema, taskIdSchema, updateTaskSchema } = require("./taskSchemas");
+const { userIdSchema } = require("./userSchema");
 const schemas = {
     login: loginSchema,
     register: registerSchema,
     email: emailSchema,
     verifyEmail: verifyEmailSchema,
-    resetPassword: resetPasswordSchema
+    resetPassword: resetPasswordSchema,
+    createTask: createTaskSchema,
+    taskId: taskIdSchema,
+    updateTask: updateTaskSchema,
+    userId: userIdSchema
 }
 
 

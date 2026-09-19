@@ -17,10 +17,14 @@ const taskSchema = mongoose.Schema({
     },
     title: {
         type: String,
-        required: true
+        required: true,
+        minLength: 1,
+        maxLength: 100
+
     },
     description: {
         type: String,
+        maxLength: 500
     },
     priority: {
         type: String,
