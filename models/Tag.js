@@ -15,11 +15,12 @@ const tagSchema = mongoose.Schema({
     },
     title: {
         type: String,
-        required: true
+        required: [true, 'title can\'t be empty'],
+        unique: [true, 'title must be unique']
     },
     color: {
         type: String,
-        required: true,
+        required: [true, 'color must be provided'],
         validate: {
             validator: validator.isHexColor,
             message: 'Please provide a valid hex color'

@@ -1,4 +1,5 @@
 const zod = require('zod');
+const validator = require('validator');
 
 const tagIdValidator =
     zod.string()
@@ -7,4 +8,15 @@ const tagIdValidator =
         .pipe(zod.uuid())
         .transform((val) => 'tag:' + val);
 
-module.exports = { tagIdValidator }
+const createTagSchema = zod.object({
+    title: zod.string().min(1).max(25),
+    color: zod.string().refine((val) => validator.isHexColor(val)),
+    home: zod.boolean(),
+    pinned: zod.boolean(),
+    builtIn: zod.boolean()
+});
+const updateTagSchema = createTagSchema.omit({ builtIn: true });
+const tagIdSchema = zod.object({
+    tagId: tagIdValidator
+});
+module.exports = { updateTagSchema, createTagSchema, tagIdSchema, tagIdValidator }
