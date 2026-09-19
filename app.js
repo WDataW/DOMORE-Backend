@@ -17,6 +17,7 @@ app.use(fileUpload({
     limits: {
         fileSize: 5 * 1024 * 1024 // 5 MB
     },
+    abortOnLimit: true
 }));
 app.use(cors({
     origin: process.env.FRONT_END_URL,
@@ -34,7 +35,6 @@ app.use('/api/v1/tags', authenticator, tagsRouter);
 app.use('/api/v1/account', authenticator, accountRouter);
 app.use(notFound);
 app.use(errorHandler);
-require('./validators/authSchemas');
 const port = process.env.PORT || 5000;
 const start = async () => {
     try {

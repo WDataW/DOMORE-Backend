@@ -13,7 +13,6 @@ const getInbox = async (req, res) => {
 }
 
 // helper functions
-
 const initInbox = (userId) => {
     return SystemMessage.create({
         key: "welcome",

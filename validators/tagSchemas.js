@@ -12,7 +12,7 @@ const createTagSchema = zod.object({
     title: zod.string().min(1).max(25),
     color: zod.string().refine((val) => validator.isHexColor(val)),
     home: zod.boolean(),
-    pinned: zod.boolean(),
+    pinned: zod.boolean().default(false),
     builtIn: zod.boolean()
 });
 const updateTagSchema = createTagSchema.omit({ builtIn: true });

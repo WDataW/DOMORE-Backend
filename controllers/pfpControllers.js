@@ -1,6 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const toPFP = require('../utils/toPFP');
 const { StatusCodes } = require('http-status-codes');
+const isImage = require('../utils/validateImage');
 
 const getPFP = async (req, res) => {
     const { id: userId } = req.user;
@@ -13,7 +14,7 @@ const getPFP = async (req, res) => {
 
 const uploadPFP = async (req, res) => {
     const { id: userId } = req.user;
-    const image = req.files.image;
+    const image = await isImage(req.files.image);
     const pfp = await toPFP(image);
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
     const { __, error } = await supabase.storage.from('Avatars').upload(`${userId}.webp`, pfp, {
