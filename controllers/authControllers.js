@@ -1,11 +1,11 @@
 const { BadRequest, Unauthorized } = require("@root/errors");
 const { RP, User } = require('@root/models');
 const { StatusCodes } = require('http-status-codes');
-const { createTransporter, hashString, generateHex, emailVerification } = require("@root/utils");
+const { hashString, generateHex } = require("@root/utils");
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { attachAuthCookies, removeAccessCookie } = require("../utils/cookies");
-const { passwordReset } = require("../utils/emails");
+const { sendVerificationEmail, sendResetEmail } = require("../utils/emails");
 const { isFutureDate } = require("../utils/date");
 const { minute } = require("../utils/time");
 const { RT, VE } = require("../models");
@@ -13,8 +13,6 @@ const { initSettings } = require("./settingsControllers");
 const { initTags } = require("./tagControllers");
 const { initInbox } = require("./inboxControllers");
 const { updateLogInStreak } = require("./userControllers");
-const { NotFound } = require("../errors");
-const sendMail = require("../utils/sendEmail");
 
 // controllers
 const login = async (req, res) => {
@@ -133,17 +131,7 @@ const showMe = async (req, res) => {
     await updateLogInStreak(user);
     res.status(StatusCodes.OK).json(user)
 }
-// helper functions
-const sendVerificationEmail = async (to, verificationCode) => {
-    // const transporter = createTransporter();
-    const mail = emailVerification({ to, verificationCode });
-    await sendMail(mail);
-}
-const sendResetEmail = async (to, resetToken) => {
-    // const transporter = createTransporter();
-    const resetUrl = `${process.env.FRONT_END_URL}/auth/reset-password?email=${to}&token=${resetToken}`
-    const mail = passwordReset({ to, resetUrl });
-    await sendMail(mail);
-}
+
+
 
 module.exports = { resendVerificationEmail, showMe, login, logout, register, verifyEmail, resetPassword, forgotPassword }

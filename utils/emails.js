@@ -1,5 +1,33 @@
 const { appName } = require("../config/constants");
 
+// email senders
+const sendMail = require("../utils/sendEmail");
+
+const sendVerificationEmail = async (to, verificationCode) => {
+  const mail = emailVerification({ to, verificationCode });
+  await sendMail(mail);
+}
+const sendResetEmail = async (to, resetToken) => {
+  const resetUrl = `${process.env.FRONT_END_URL}/auth/reset-password?email=${to}&token=${resetToken}`
+  const mail = passwordReset({ to, resetUrl });
+  await sendMail(mail);
+}
+const sendFakeVerificationEmail = async (to, verificationCode) => {
+  const transporter = createTransporter();
+  const mail = emailVerification({ to, verificationCode });
+  await transporter.sendMail(mail);
+}
+const sendFakeResetEmail = async (to, resetToken) => {
+  const transporter = createTransporter();
+  const resetUrl = `${process.env.FRONT_END_URL}/auth/reset-password?email=${to}&token=${resetToken}`
+  const mail = passwordReset({ to, resetUrl });
+  await transporter.sendMail(mail);
+}
+
+
+
+
+// email contents
 const emailVerification = ({ to, verificationCode }) => ({
   from: process.env.EMAIL_SOURCE,
   to,
@@ -172,4 +200,4 @@ Thanks!
 });
 
 
-module.exports = { emailVerification, passwordReset }
+module.exports = { emailVerification, passwordReset, sendFakeResetEmail, sendFakeVerificationEmail, sendResetEmail, sendVerificationEmail }
