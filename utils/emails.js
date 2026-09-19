@@ -2,6 +2,7 @@ const { appName } = require("../config/constants");
 
 // email senders
 const sendMail = require("../utils/sendEmail");
+const createTransporter = require("./createTransporter");
 
 const sendVerificationEmail = async (to, verificationCode) => {
   const mail = emailVerification({ to, verificationCode });
@@ -80,11 +81,11 @@ Thanks!
         >
           <span
             style="
-              font-size: 36px;
+              font-size: 32px;
               font-weight: 700;
-              letter-spacing: 10px;
+              letter-spacing: 5px;
               color: #111827;
-              font-family: 'Courier New', monospace;
+              font-family: monospace;
             "
           >
             ${verificationCode}

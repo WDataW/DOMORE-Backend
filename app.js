@@ -34,7 +34,7 @@ app.use('/api/v1/tags', authenticator, tagsRouter);
 app.use('/api/v1/account', authenticator, accountRouter);
 app.use(notFound);
 app.use(errorHandler);
-
+require('./validators/authSchemas');
 const port = process.env.PORT || 5000;
 const start = async () => {
     try {

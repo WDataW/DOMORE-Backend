@@ -124,6 +124,6 @@ const defaultTags = [{
 }]
 const initTags = (userId) => {
     const defaultTagsWithUserId = defaultTags.map((tag) => ({ ...tag, userId }));
-    Tag.create(defaultTagsWithUserId);
+    return Tag.create(defaultTagsWithUserId);
 }
 module.exports = { initTags, getTag, getAllTags, editTag, deleteTag, createTag }

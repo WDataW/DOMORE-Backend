@@ -13,10 +13,11 @@ const { initSettings } = require("./settingsControllers");
 const { initTags } = require("./tagControllers");
 const { initInbox } = require("./inboxControllers");
 const { updateLogInStreak } = require("./userControllers");
+const validate = require("../validators/validateInput");
 
 // controllers
 const login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = validate('login', req.body);
     if (!email || !password) throw new BadRequest('Invalid Credentials');
     const user = await User.findOne({ email });
     if (!user) throw new Unauthorized('Invalid Email or Password');
@@ -36,7 +37,7 @@ const logout = async (req, res) => {
     res.status(StatusCodes.OK).json({ message: 'Logged out successfully' });
 }
 const register = async (req, res) => {
-    const { fullname, email, password } = req.body;
+    const { fullname, email, password } = validate('register', req.body);
     if (!fullname || !email || !password) throw new BadRequest('Invalid Credentials');
 
     const existingUser = await User.findOne({ email });
@@ -55,7 +56,7 @@ const register = async (req, res) => {
 }
 
 const resendVerificationEmail = async (req, res) => {
-    const { email } = req.body;
+    const { email } = validate('email', req.body);
     const user = await User.findOne({ email });
     if (user.isVerified) return res.status(StatusCodes.OK).json("Email already verified");
 
@@ -66,7 +67,7 @@ const resendVerificationEmail = async (req, res) => {
 }
 
 const verifyEmail = async (req, res) => {
-    const { code, email } = req.body
+    const { code, email } = validate('verifyEmail', req.body);
     const user = await User.findOne({ email });
     const verificationRequest = await VE.findOne({ email });
     if (user.isVerified) return res.status(StatusCodes.OK).json("Email already verified");
@@ -85,7 +86,7 @@ const verifyEmail = async (req, res) => {
 }
 
 const forgotPassword = async (req, res) => {
-    const { email } = req.body;
+    const { email } = validate('email', req.body);
     if (!email) throw new BadRequest('Email must be provided');
 
     const user = await User.findOne({ email });
@@ -106,7 +107,7 @@ const forgotPassword = async (req, res) => {
     res.status(StatusCodes.OK).json({ message: 'Reset email sent' });
 }
 const resetPassword = async (req, res) => {
-    const { email, resetToken, newPassword } = req.body;
+    const { email, resetToken, newPassword } = validate('resetPassword', req.body);
     const user = await User.findOne({ email });
     if (!user) throw new BadRequest('Invalid Credintials');
 
