@@ -1,21 +1,24 @@
-const { ValidationError, fromError } = require("zod-validation-error");
-const { loginSchema, registerSchema, emailSchema, verifyEmailSchema, resetPasswordSchema } = require("./authSchemas");
+const { fromError } = require("zod-validation-error");
+const { ValidationError } = require("@root/errors")
+const { loginSchema, registerSchema, verifyEmailSchema, resetPasswordSchema } = require("./authSchemas");
 const { createTaskSchema, taskIdSchema, updateTaskSchema } = require("./taskSchemas");
-const { userIdSchema } = require("./userSchema");
+const { passwordSchema, emailSchema, userIdValidator, nameSchema } = require("./userSchema");
 const { tagIdSchema, updateTagSchema, createTagSchema } = require("./tagSchemas");
 const schemas = {
     login: loginSchema,
     register: registerSchema,
-    email: emailSchema,
+    email: emailSchema,//
     verifyEmail: verifyEmailSchema,
     resetPassword: resetPasswordSchema,
     createTask: createTaskSchema,
     taskId: taskIdSchema,
     updateTask: updateTaskSchema,
-    userId: userIdSchema,
+    userId: userIdValidator,
     tagId: tagIdSchema,
     createTag: createTagSchema,
-    updateTag: updateTagSchema
+    updateTag: updateTagSchema,
+    password: passwordSchema,
+    name: nameSchema//
 }
 
 

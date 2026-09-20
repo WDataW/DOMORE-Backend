@@ -6,7 +6,8 @@ const { dateOfInvocation } = require('../utils/date');
 const userSchema = mongoose.Schema({
     fullname: {
         type: String,
-        required: [true, 'Please provide a fullname']
+        required: [true, 'Please provide a fullname'],
+        maxLength: 25
     },
     email: {
         type: String,
