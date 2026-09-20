@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser');
 const { authenticator, notFound, errorHandler } = require('./middleware');
 const { authRouter, tasksRouter, tagsRouter, accountRouter } = require('./routes');
 const { minute } = require('./utils/time');
+const { User, Task, Tag, Message, Settings, RT, RP, SystemMessage, VE } = require('./models');
 
 // middleware
 app.use(fileUpload({
@@ -35,6 +36,7 @@ app.use('/api/v1/tags', authenticator, tagsRouter);
 app.use('/api/v1/account', authenticator, accountRouter);
 app.use(notFound);
 app.use(errorHandler);
+
 const port = process.env.PORT || 5000;
 const start = async () => {
     try {

@@ -5,11 +5,13 @@ const { NotFound } = require("../errors");
 
 const getInbox = async (req, res) => {
     const { id: userId } = req.user;
-
+    const { language } = validate('language', { language: req.query.language });
     const settings = await Settings.findOne({ userId });
     const messages = await Message.find({ userId }).lean();
     const systemMessages = await SystemMessage.find({ userId }).lean();
-    const resolvedMessages = resolveSystemMessages({ sysMessages: systemMessages, lang: settings.language ?? "en" });
+    const resolvedMessages = resolveSystemMessages({
+        sysMessages: systemMessages, lang: settings.language || language || 'en'
+    });
     const allMessages = [...messages, ...resolvedMessages];
     res.status(StatusCodes.OK).json(allMessages);
 }

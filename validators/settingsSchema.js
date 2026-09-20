@@ -15,4 +15,4 @@ const themeSchema = zod.object({
         darkSecondaryColor: colorValidator,
     }).partial().optional()
 })
-module.exports = { languageSchema, themeSchema }
+module.exports = { languageSchema, languageValidator, themeSchema }
