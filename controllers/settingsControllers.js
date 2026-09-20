@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { Settings } = require("../models");
 const checkUpdates = require("../utils/checkUpdates");
+const validate = require("../validators/validateInput");
 
 const getAllSettings = async (req, res) => {
     const { id: userId } = req.user;
@@ -9,7 +10,8 @@ const getAllSettings = async (req, res) => {
 }
 const editSettings = async (req, res) => {
     const { id: userId } = req.user;
-    const { language, theme } = req.body;
+    const { language } = validate('language', req.body);
+    const { theme } = validate('theme', req.body);
     const existingSettings = await Settings.findOne({ userId }).select('-userId -_id -__v').lean();
     if (language) existingSettings.language = language;
     if (theme) {

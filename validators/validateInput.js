@@ -5,6 +5,7 @@ const { createTaskSchema, taskIdSchema, updateTaskSchema } = require("./taskSche
 const { passwordSchema, emailSchema, userIdValidator, nameSchema } = require("./userSchema");
 const { tagIdSchema, updateTagSchema, createTagSchema } = require("./tagSchemas");
 const { messageIdSchema, fromSchema } = require("./messageSchemas");
+const { languageSchema, themeSchema } = require("./settingsSchema");
 const schemas = {
     login: loginSchema,
     register: registerSchema,
@@ -21,7 +22,9 @@ const schemas = {
     password: passwordSchema,
     name: nameSchema,
     messageId: messageIdSchema,
-    from: fromSchema
+    from: fromSchema,
+    language: languageSchema,
+    theme: themeSchema
 }
 
 
