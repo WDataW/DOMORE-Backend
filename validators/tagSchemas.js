@@ -15,7 +15,7 @@ const createTagSchema = zod.object({
     pinned: zod.boolean().default(false),
     builtIn: zod.boolean()
 });
-const updateTagSchema = createTagSchema.omit({ builtIn: true });
+const updateTagSchema = createTagSchema.omit({ builtIn: true }).partial();
 const tagIdSchema = zod.object({
     tagId: tagIdValidator
 });

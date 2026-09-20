@@ -8,11 +8,11 @@ const baseThemeValidator = zod.enum(['dark', 'light'], { message: 'Theme must ei
 const colorValidator = zod.string().refine((val) => validator.isHexColor(val));
 const themeSchema = zod.object({
     theme: zod.object({
-        base: baseThemeValidator.optional(),
-        lightAccentColor: colorValidator.optional(),
-        lightSecondaryColor: colorValidator.optional(),
-        darkAccentColor: colorValidator.optional(),
-        darkSecondaryColor: colorValidator.optional(),
-    }).optional()
+        base: baseThemeValidator,
+        lightAccentColor: colorValidator,
+        lightSecondaryColor: colorValidator,
+        darkAccentColor: colorValidator,
+        darkSecondaryColor: colorValidator,
+    }).partial().optional()
 })
 module.exports = { languageSchema, themeSchema }

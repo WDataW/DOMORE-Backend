@@ -6,7 +6,7 @@ The API server for [DOMORE](https://github.com/WDataW/DOMORE) — a task managem
 - 🖥️ **Frontend:** [github.com/WDataW/DOMORE](https://github.com/WDataW/DOMORE)
 - 🔌 **Live API:** [api.domores.nerdos.site](https://api.domores.nerdos.site)
 - 🌐 **Live app:** [domores.nerdos.site](https://domores.nerdos.site)
-
+- 📄 **API Docs:** [docs/api.md](./docs/api.md)
 ## Features
 
 - **Authentication** — sign up, sign in, email verification, and password reset, using JWT sessions and bcrypt-hashed passwords.

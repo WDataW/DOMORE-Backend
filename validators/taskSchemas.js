@@ -11,7 +11,7 @@ const createTaskSchema = zod.object({
 const updateTaskSchema = createTaskSchema.extend({
     pinned: zod.boolean(),
     status: zod.enum(['completed', 'active'])
-})
+}).partial()
 const taskIdValidator =
     zod.string()
         .refine((val) => val.startsWith('task:'))

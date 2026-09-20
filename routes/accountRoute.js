@@ -1,5 +1,5 @@
 const { updateFullname, getAllSettings, editSettings, uploadPFP, removePFP, getPFP } = require('@root/controllers');
-const { deleteAccount, logout } = require('../controllers');
+const { deleteAccount } = require('../controllers');
 const { getInbox, markMessageAsRead } = require('../controllers/inboxControllers');
 const createLimiter = require('../utils/createLimiter');
 const { minute } = require('../utils/time');

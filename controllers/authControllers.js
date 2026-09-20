@@ -63,7 +63,7 @@ const resendVerificationEmail = async (req, res) => {
     const verificationCode = crypto.randomInt(100000, 1000000);
     await VE.findOneAndReplace({ email }, { email, verificationCode: hashString(String(verificationCode)) }, { upsert: true, returnDocument: 'after' });
     await sendVerificationEmail(email, verificationCode);
-    res.status(StatusCodes.OK).json(verificationCode);
+    res.status(StatusCodes.OK).json({ message: 'Email sent' });
 }
 
 const verifyEmail = async (req, res) => {

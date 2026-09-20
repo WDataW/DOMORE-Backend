@@ -5,7 +5,7 @@ const createLimiter = require('../utils/createLimiter');
 const router = require('express').Router();
 const authLimiter = createLimiter({
     windowMs: 15 * minute,
-    max: 100,
+    max: 10,
 })
 router.post('/login', authLimiter, login);
 router.post('/register', authLimiter, register);
