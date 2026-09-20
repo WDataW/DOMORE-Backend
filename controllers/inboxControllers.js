@@ -1,5 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
-const { Message, User, Settings, SystemMessage } = require("../models")
+const { Message, Settings, SystemMessage } = require("../models");
+const validate = require("../validators/validateInput");
+const { NotFound } = require("../errors");
 
 const getInbox = async (req, res) => {
     const { id: userId } = req.user;
@@ -10,6 +12,19 @@ const getInbox = async (req, res) => {
     const resolvedMessages = resolveSystemMessages({ sysMessages: systemMessages, lang: settings.language ?? "en" });
     const allMessages = [...messages, ...resolvedMessages];
     res.status(StatusCodes.OK).json(allMessages);
+}
+
+const markMessageAsRead = async (req, res) => {
+    const { from } = validate('from', req.body);
+    const { messageId } = validate('messageId', req.params);
+    const { id: userId } = req.user;
+    let messageToEdit;
+    if (from == "system") messageToEdit = await SystemMessage.findOne({ userId, id: messageId });
+    else messageToEdit = await Message.findOne({ userId, id: messageId });
+    if (!messageToEdit) throw new NotFound('Message is inexistent')
+    messageToEdit.read = true;
+    await messageToEdit.save();
+    res.status(StatusCodes.OK).json(messageToEdit);
 }
 
 // helper functions
@@ -36,16 +51,4 @@ const resolveSystemMessages = ({ lang, sysMessages }) => {
     return resolvedMessages;
 }
 
-const markMessageAsRead = async (req, res) => {
-    const { from } = req.body;
-    const { messageId } = req.params
-    const { id: userId } = req.user;
-    let messageToEdit;
-    if (from == "system") messageToEdit = await SystemMessage.findOne({ userId, id: messageId });
-    else messageToEdit = await Message.findOne({ userId, id: messageId });
-
-    messageToEdit.read = true;
-    await messageToEdit.save();
-    res.status(StatusCodes.OK).json(messageToEdit);
-}
 module.exports = { initInbox, getInbox, markMessageAsRead }

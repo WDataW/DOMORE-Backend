@@ -13,7 +13,8 @@ const messageSchema = mongoose.Schema({
     },
     from: {
         type: String,
-        required: true
+        required: true,
+        maxLength: 25
     },
     read: {
         type: Boolean,

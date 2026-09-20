@@ -4,10 +4,11 @@ const { loginSchema, registerSchema, verifyEmailSchema, resetPasswordSchema } = 
 const { createTaskSchema, taskIdSchema, updateTaskSchema } = require("./taskSchemas");
 const { passwordSchema, emailSchema, userIdValidator, nameSchema } = require("./userSchema");
 const { tagIdSchema, updateTagSchema, createTagSchema } = require("./tagSchemas");
+const { messageIdSchema, fromSchema } = require("./messageSchemas");
 const schemas = {
     login: loginSchema,
     register: registerSchema,
-    email: emailSchema,//
+    email: emailSchema,
     verifyEmail: verifyEmailSchema,
     resetPassword: resetPasswordSchema,
     createTask: createTaskSchema,
@@ -18,7 +19,9 @@ const schemas = {
     createTag: createTagSchema,
     updateTag: updateTagSchema,
     password: passwordSchema,
-    name: nameSchema//
+    name: nameSchema,
+    messageId: messageIdSchema,
+    from: fromSchema
 }
 
 
