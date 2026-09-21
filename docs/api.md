@@ -2,7 +2,7 @@
 
 The API server for **DOMORE**, a task management app. Built with Node.js, Express 5, and MongoDB (Mongoose).
 
-- **Base URL (production):** `https://api.domores.nerdos.site/api/v1`
+- **Base URL (production):** `https://api.domore.nerdos.site/api/v1`
 - **Base URL (local):** `http://localhost:5000/api/v1`
 - **Content type:** `application/json` for all requests, unless noted (profile picture upload uses `multipart/form-data`)
 - **Auth:** HTTP-only, signed cookies (`accessToken` / `refreshToken`) — not bearer tokens. All requests must be made with `credentials: 'include'` (fetch) or `withCredentials: true` (axios) so cookies are sent.

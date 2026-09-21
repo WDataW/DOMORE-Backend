@@ -4,8 +4,8 @@ The API server for [DOMORE](https://github.com/WDataW/DOMORE) — a task managem
 
 - ⚙️ **This repo (API):** [github.com/WDataW/DOMORE-Backend](https://github.com/WDataW/DOMORE-Backend)
 - 🖥️ **Frontend:** [github.com/WDataW/DOMORE](https://github.com/WDataW/DOMORE)
-- 🔌 **Live API:** [api.domores.nerdos.site](https://api.domores.nerdos.site)
-- 🌐 **Live app:** [domores.nerdos.site](https://domores.nerdos.site)
+- 🔌 **Live API:** [api.domore.nerdos.site](https://api.domore.nerdos.site)
+- 🌐 **Live app:** [domore.nerdos.site](https://domore.nerdos.site)
 - 📄 **API Docs:** [docs/api.md](./docs/api.md)
 ## Features
 
@@ -109,7 +109,7 @@ To use this API with the [DOMORE frontend](https://github.com/WDataW/DOMORE):
 
 ## Deployment
 
-This API is deployed independently of the frontend (currently at [api.domores.nerdos.site](https://api.domores.nerdos.site)). To deploy your own instance:
+This API is deployed independently of the frontend (currently at [api.domore.nerdos.site](https://api.domore.nerdos.site)). To deploy your own instance:
 
 1. Provision a MongoDB database, a Supabase project, and a Resend account (for production email).
 2. Deploy this repo to a Node-friendly host (Render, Railway, a VPS, etc.).
@@ -118,5 +118,5 @@ This API is deployed independently of the frontend (currently at [api.domores.ne
 
 ## About
 
-- API: [api.domores.nerdos.site](https://api.domores.nerdos.site)
-- Frontend: [domores.nerdos.site](https://domores.nerdos.site)
+- API: [api.domore.nerdos.site](https://api.domore.nerdos.site)
+- Frontend: [domore.nerdos.site](https://domore.nerdos.site)
