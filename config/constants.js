@@ -1,2 +1,2 @@
-const appName = "DOMORES";
+const appName = "DOMORE";
 module.exports = { appName }

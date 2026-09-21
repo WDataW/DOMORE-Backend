@@ -4,6 +4,7 @@ const { Task } = require('@root/models');
 const checkUpdates = require('@root/utils/checkUpdates');
 const validate = require('../validators/validateInput');
 const { quickSort, partitionDate } = require('../utils/quickSort');
+const { dateOfInvocation } = require('../utils/date');
 
 
 
@@ -30,6 +31,8 @@ const editTask = async (req, res) => {
     const { taskId } = validate('taskId', req.params);
     const { id: userId } = req.user;
     const updates = checkUpdates(possibleUpdates);
+    if (status == 'completed') updates.completedAt = dateOfInvocation();
+    else updates.completedAt = null;
     const editedTask = await Task.findOneAndUpdate({ id: taskId, userId }, updates, { returnDocument: 'after', runValidators: true, context: 'query' });
     if (!editedTask) throw new BadRequest('Task is inexistent');
     res.status(StatusCodes.OK).json(editedTask);

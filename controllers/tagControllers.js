@@ -30,6 +30,7 @@ const editTag = async (req, res) => {
     const { tagId } = validate('tagId', req.params);
     const { id: userId } = req.user;
     const updates = checkUpdates(possibleUpdates);
+    if (updates?.color) updates.icon = `bg-[${color}]`;
     const editedTag = await Tag.findOneAndUpdate({ id: tagId, userId }, updates, { returnDocument: 'after', runValidators: true, context: 'query' });
     if (!editedTag) throw new BadRequest('Tag is inexistent');
     res.status(StatusCodes.OK).json(editedTag);
