@@ -48,7 +48,7 @@ const resetLogInStreak = async (user) => {
 }
 const incrementLogInStreak = async (user) => {
     user.lastLogIn = new Date();
-    user.currentLogInStreak = ++user.currentLogInStreak;
+    ++user.currentLogInStreak;
     if (user.currentLogInStreak > user.highestLogInStreak) user.highestLogInStreak = user.currentLogInStreak;
     await user.save({ runValidators: false });
     return user;

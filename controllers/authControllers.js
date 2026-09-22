@@ -14,6 +14,7 @@ const { initTags } = require("./tagControllers");
 const { initInbox } = require("./inboxControllers");
 const { updateLogInStreak } = require("./userControllers");
 const validate = require("../validators/validateInput");
+const { NotFound } = require("../errors");
 
 // controllers
 const login = async (req, res) => {
@@ -128,7 +129,7 @@ const resetPassword = async (req, res) => {
 const showMe = async (req, res) => {
     const { id: _id } = req.user;
     const user = await User.findOne({ _id }).select('_id email fullname lastLogIn highestLogInStreak currentLogInStreak createdAt');
-    if (!user) return;
+    if (!user) throw new NotFound("User not found");
     await updateLogInStreak(user);
     res.status(StatusCodes.OK).json(user)
 }
